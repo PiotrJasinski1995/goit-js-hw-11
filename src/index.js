@@ -40,7 +40,7 @@ const fetchImg = async currentPage => {
 
       const totalPhotosHits = response.data.totalHits;
 
-      imageString = totalPhotosHits === 1 ? 'image' : 'images';
+      const imageString = totalPhotosHits === 1 ? 'image' : 'images';
 
       if (isFirstSearch) {
         Notiflix.Notify.info(
