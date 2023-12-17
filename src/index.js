@@ -30,6 +30,8 @@ const fetchImg = async currentPage => {
     });
 
     let photos = [];
+    let totalPhotosHits = 0;
+    let imageString = '';
 
     if (input.value) {
       const response = await axios.get(
@@ -38,15 +40,9 @@ const fetchImg = async currentPage => {
 
       photos = response.data.hits;
 
-      const totalPhotosHits = response.data.totalHits;
+      totalPhotosHits = response.data.totalHits;
 
-      const imageString = totalPhotosHits === 1 ? 'image' : 'images';
-
-      if (isFirstSearch) {
-        Notiflix.Notify.info(
-          `Hooray! We found ${totalPhotosHits} ${imageString}.`
-        );
-      }
+      imageString = totalPhotosHits === 1 ? 'image' : 'images';
 
       loadMoreBtn.hidden = false;
     }
@@ -57,12 +53,20 @@ const fetchImg = async currentPage => {
       throw new Error(
         'Sorry, there are no images matching your search query. Please try again.'
       );
-    } else if (photos.length > 0 && photos.length < photosPerPage) {
-      Notiflix.Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
+    } else if (photos.length > 0) {
+      if (isFirstSearch) {
+        Notiflix.Notify.info(
+          `Hooray! We found ${totalPhotosHits} ${imageString}.`
+        );
+      }
 
-      loadMoreBtn.hidden = true;
+      if (photos.length < photosPerPage) {
+        Notiflix.Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+
+        loadMoreBtn.hidden = true;
+      }
     }
 
     const photosArray = photos.map(image => ({
